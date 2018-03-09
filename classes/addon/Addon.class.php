@@ -270,4 +270,36 @@
         public function isVersionRelease() {
             return str_ends_with($this->getVersion(), '-RELEASE');
         }
+
+        //TODO: Implement logging functions once documentation has been released for APIv2
+
+        /**
+         * Log debug information to the addons logging file.
+         *
+         * @param $debug string Debug to log
+         */
+        public function debug($debug) { }
+
+        /**
+         * Log information to the addons logging file.
+         *
+         * @param $info string Information to log
+         */
+        public function info($info) { }
+
+        /**
+         * Log a warning to the addons logging file.
+         *
+         * @param $warn string warn to log
+         */
+        public function warn($warn) { }
+
+        /**
+         * Log an error to the addons logging file.
+         *
+         * @param $error string Error to log
+         */
+        public function error($error) { }
+
+
     }
