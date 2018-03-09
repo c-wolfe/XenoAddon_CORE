@@ -14,7 +14,7 @@
         /** @var Addon */
         private $addon;
         private $database;
-        /** @var  array */
+        /** @var array */
         private $config;
         /** @var array */
         private $default_config;

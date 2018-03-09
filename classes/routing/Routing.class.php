@@ -12,9 +12,7 @@
      */
     class Routing {
 
-        /**
-         * @var Addon $addon
-         */
+        /** @var Addon $addon */
         private $addon;
         /** @var array */
         private $routes;
