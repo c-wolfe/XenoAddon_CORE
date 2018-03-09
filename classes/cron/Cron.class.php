@@ -8,6 +8,8 @@
     /**
      * Class Cron
      *
+     * TODO: Waiting for documentation on APIv2 to implement this into a working version
+     *
      * @package Cameron\XenoPanel\Addons\Core\Cron
      */
     class Cron {

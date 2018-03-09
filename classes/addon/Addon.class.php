@@ -43,7 +43,7 @@
             $this->version = $version;
             $this->authors = $authors;
             $this->type = $type;
-            $this->premium;
+            $this->premium = $premium;
 
             if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
 
