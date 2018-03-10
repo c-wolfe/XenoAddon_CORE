@@ -32,12 +32,10 @@
         $nu_chars = "1234567890";
         $sp_chars = "!@#$%^&*()_+[]{}\|'\";:/?.>,<`~`'";
 
-        $charset = explode(($lowercase ? $lc_chars : "") . ($uppercase ? $uc_chars : "") . ($special ? $sp_chars : "") . ($numbers ? $nu_chars : ""), '');
+        $charset = explode('', ($lowercase ? $lc_chars : "") . ($uppercase ? $uc_chars : "") . ($special ? $sp_chars : "") . ($numbers ? $nu_chars : ""));
 
         for ($i = 0; $i < $length; $i++) {
-
             $string .= $charset[ random_int(0, sizeof($charset)) - 1 ];
-
         }
 
         return $string;
