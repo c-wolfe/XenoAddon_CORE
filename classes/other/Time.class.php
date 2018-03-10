@@ -18,11 +18,11 @@
     namespace Cameron\XenoPanel\Addons\Core\Time;
 
     /**
-     * Class TimeUtil
+     * Class Time
      *
      * @package Cameron\XenoPanel\Addons\Core\Time
      */
-    class TimeUtil {
+    class Time {
 
         const MILLISECOND = 1;
         const SECOND = self::MILLISECOND * 1000;
@@ -37,7 +37,7 @@
         const __default = self::MILLISECOND;
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -47,7 +47,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -57,7 +57,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -67,7 +67,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -77,7 +77,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -87,7 +87,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -97,7 +97,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -107,7 +107,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int
@@ -117,7 +117,7 @@
         }
 
         /**
-         * @param $milliseconds   TimeUtil|int
+         * @param $milliseconds   Time|int
          * @param $amount         int
          *
          * @return int

@@ -49,6 +49,8 @@
         private $premium;
         /** @var string */
         private $license = null;
+        /** @var string */
+        private $directory;
 
         public function __construct($name, $title, $version, $authors, $type, $premium = false) {
             $this->api = $GLOBALS['apiv2'];
@@ -59,6 +61,7 @@
             $this->authors = $authors;
             $this->type = $type;
             $this->premium = $premium;
+            $this->directory = __DIR__;
 
             if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
 
@@ -148,7 +151,7 @@
          * @return string
          */
         public function getDirectory() {
-            return __DIR__;
+            return $this->directory;
         }
 
         /**
@@ -187,6 +190,8 @@
             $config['version'] = $this->getVersion();
             $config['authors'] = $this->getAuthors();
             $config['type'] = AddonType::toString($this->getType());
+
+            // Licensing currently doesn't exist, and is pending discussion with Liam of how it will be implemented.
             if ($this->getLicense() != null) $config['license'] = $this->getLicense();
 
             return $config;
@@ -218,6 +223,7 @@
          */
         public function setLicense($license) {
             $this->license = $license;
+            file_put_contents($this->getDirectory() . '/.license', $this->getLicense());
         }
 
         /**

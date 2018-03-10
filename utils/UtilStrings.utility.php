@@ -22,3 +22,23 @@
     function str_ends_with($haystack, $needle) {
         return strlen($needle) === 0 || (substr($haystack, -strlen($needle)) === $needle);
     }
+
+    function rand_str($length, $lowercase = true, $uppercase = true, $special = true, $numbers = true) {
+
+        $string = "";
+
+        $lc_chars = "abcdefghijklmnopqrstuvwxyz";
+        $uc_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $nu_chars = "1234567890";
+        $sp_chars = "!@#$%^&*()_+[]{}\|'\";:/?.>,<`~`'";
+
+        $charset = explode(($lowercase ? $lc_chars : "") . ($uppercase ? $uc_chars : "") . ($special ? $sp_chars : "") . ($numbers ? $nu_chars : ""), '');
+
+        for ($i = 0; $i < $length; $i++) {
+
+            $string .= $charset[ random_int(0, sizeof($charset)) - 1 ];
+
+        }
+
+        return $string;
+    }

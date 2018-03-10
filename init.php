@@ -18,6 +18,11 @@
     namespace Cameron\XenoPanel\Addons\Core;
 
     require __DIR__ . '/classes/addon/Addon.class.php';
+    require __DIR__ . '/classes/addon/AddonType.class.php';
+    require __DIR__ . '/classes/config/Configuration.class.php';
+    require __DIR__ . '/classes/cron/Cron.class.php';
+    require __DIR__ . '/classes/other/Time.class.php';
+    require __DIR__ . '/classes/routing/Routing.class.php';
 
     use Cameron\XenoPanel\Addons\Core\Addon\AddonType;
 
