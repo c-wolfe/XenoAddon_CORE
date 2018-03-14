@@ -49,8 +49,19 @@
         private $premium;
         /** @var string */
         private $license = null;
+        /** @var bool */
+        private $license_valid = false;
         /** @var string */
         private $directory;
+        /** @var string */
+        private $root_directory;
+
+        /**
+         * @return string
+         */
+        public function getRootDirectory() {
+            return $this->root_directory;
+        }
 
         public function __construct($name, $title, $version, $authors, $type, $premium = false) {
             $this->api = $GLOBALS['apiv2'];
@@ -61,7 +72,12 @@
             $this->authors = $authors;
             $this->type = $type;
             $this->premium = $premium;
-            $this->directory = __DIR__;
+            $this->directory = __DIR__ . '/';
+            $this->root_directory = __DIR__ . '/';
+
+            while (!file_exists($this->getRootDirectory() . 'composer.json') && !file_exists($this->getRootDirectory() . 'includes/config.cfg')) {
+                $this->root_directory .= '../';
+            }
 
             if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
 
@@ -73,12 +89,24 @@
                 ]);
 
             } else {
-                $this->database->update('addons_list', ['version' => $this->getVersion()], ['short' => $this->getName()]);
+                $this->database->update('addons_list', [
+                    'version' => $this->getVersion(),
+                    'title'   => $this->getTitle()
+                ], ['short' => $this->getName()]);
             }
 
             if ($this->isPremium()) {
-                if (file_exists($this->getDirectory() . '/.license')) {
-                    $this->setLicense(file_get_contents($this->getDirectory() . '/.license'));
+                if (file_exists($this->getDirectory() . '.license')) {
+                    $this->setLicense(file_get_contents($this->getDirectory() . '.license'));
+
+                    /**
+                     * Waiting to implement the real checker. Depending on how it's implemented on Xeno's level, we can
+                     * have free addons with premium features built in, allowing us to have only one project to manage
+                     * instead of multiple
+                     */
+                    $this->license_valid = true;
+                } else {
+                    file_put_contents($this->getDirectory() . '.license', 'Your license here :)');
                 }
             }
 
@@ -89,7 +117,7 @@
          * @param $column array The column(s) to check for
          * @param $value  array
          *
-         * @return bool
+         * @return bool Whether the column exists in the database
          */
         public function rowExistsInDatabase($table, $column, $value) {
             $search = [];
@@ -139,19 +167,19 @@
         }
 
         /**
-         * @param bool $premium
-         */
-        public function setPremium($premium) {
-            $this->premium = $premium;
-        }
-
-        /**
          * Get the directory of the addon
          *
          * @return string
          */
         public function getDirectory() {
             return $this->directory;
+        }
+
+        /**
+         * @return bool
+         */
+        public function isLicenseValid() {
+            return $this->license_valid;
         }
 
         /**
@@ -223,7 +251,7 @@
          */
         public function setLicense($license) {
             $this->license = $license;
-            file_put_contents($this->getDirectory() . '/.license', $this->getLicense());
+            file_put_contents($this->getDirectory() . '.license', $this->getLicense());
         }
 
         /**
@@ -322,5 +350,13 @@
          */
         public function error($error) { }
 
+        /**
+         * @param $email   string
+         * @param $subject string
+         * @param $body    string
+         */
+        public function sendEmail($email, $subject, $body) {
+            $this->api->send_email($email, $subject, $body);
+        }
 
     }

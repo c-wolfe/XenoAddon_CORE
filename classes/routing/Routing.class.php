@@ -42,7 +42,7 @@
          */
         public function loadRoutes() {
 
-            $raw_routes = json_decode(file_get_contents($this->addon->getDirectory() . '/routing.json'), true);
+            $raw_routes = json_decode(file_get_contents($this->addon->getDirectory() . 'routing.json'), true);
 
             foreach ($raw_routes as $route) {
                 $this->routes[ $route['route'] ] = $route['location'];
@@ -113,7 +113,7 @@
                 $raw_routes[ sizeof($raw_routes) ] = $raw_route;
             }
 
-            file_put_contents($this->addon->getDirectory() . '/routing.json', json_encode($raw_routes));
+            file_put_contents($this->addon->getDirectory() . 'routing.json', json_encode($raw_routes));
         }
 
         /**

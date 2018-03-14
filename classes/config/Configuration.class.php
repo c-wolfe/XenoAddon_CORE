@@ -66,24 +66,6 @@
         }
 
         /**
-         * This is only meant to be used in a development environment
-         */
-        public function loadDefaultFromFile() {
-            if ($this->addon->isVersionDev() && file_exists($this->addon->getDirectory() . '/config/default.json')) {
-                $this->loadDefaultsFromJson(file_get_contents($this->addon->getDirectory() . '/config/default.json'));
-            }
-        }
-
-        /**
-         * Load a default configuration example from JSON
-         *
-         * @param $json string
-         */
-        public function loadDefaultsFromJson($json) {
-            $this->setDefaultConfig(json_decode($json, true));
-        }
-
-        /**
          * Save all configuration options to the database
          */
         public function saveConfig() {
@@ -120,6 +102,24 @@
 
             }
 
+        }
+
+        /**
+         * This is only meant to be used in a development environment
+         */
+        public function loadDefaultFromFile() {
+            if ($this->addon->isVersionDev() && file_exists($this->addon->getDirectory() . 'config/default.json')) {
+                $this->loadDefaultsFromJson(file_get_contents($this->addon->getDirectory() . 'config/default.json'));
+            }
+        }
+
+        /**
+         * Load a default configuration example from JSON
+         *
+         * @param $json string
+         */
+        public function loadDefaultsFromJson($json) {
+            $this->setDefaultConfig(json_decode($json, true));
         }
 
         /**
