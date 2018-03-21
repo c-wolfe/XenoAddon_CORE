@@ -29,36 +29,17 @@
      */
     class CLicense {
 
-        private static $License;
-
-        /** @var  boolean */
-        private static $valid = false;
-        /** @var  boolean */
-        private static $free = true;
-        /** @var boolean */
-        private static $unlimited = true;
-        /** @var  boolean */
-        private static $unlimited_servers = false;
-        /** @var  boolean */
-        private static $unlimited_nodes = true;
-        /** @var  string */
-        private static $license_response = null;
-        /** @var  int */
-        private static $allowed_node_count;
+        private static $api;
 
         public function __construct() {
-            self::$License = $GLOBALS['License'];
+            self::$api = $GLOBALS['License'];
         }
 
         /**
          * @return bool
          */
         public static function isValid() {
-            if (!self::$valid) {
-                self::$valid = self::$License->has_valid_license();
-            }
-
-            return self::$valid;
+            return self::$api->has_valid_license();
         }
 
         /**
@@ -72,66 +53,42 @@
          * @return bool
          */
         public static function isFree() {
-            if (self::$free) {
-                self::$free = self::$License->is_free_license();
-            }
-
-            return self::$free;
+            return self::$api->is_free_license();
         }
 
         /**
          * @return bool
          */
         public static function isUnlimited() {
-            if (self::$unlimited) {
-                self::$unlimited = self::$License->is_unlimited_licenses();
-            }
-
-            return self::$unlimited;
+            return self::$unlimited = self::$api->is_unlimited_licenses();
         }
 
         /**
          * @return bool
          */
         public static function isUnlimitedServers() {
-            if (self::$unlimited_servers) {
-                self::$unlimited_servers = self::$License->get_allowed_server_count() == 999999;
-            }
-
-            return self::$unlimited_servers;
+            return self::$unlimited_servers = self::$api->get_allowed_server_count();
         }
 
         /**
          * @return bool
          */
         public static function isUnlimitedNodes() {
-            if (self::$unlimited_nodes) {
-                self::$unlimited_nodes = self::getAllowedNodeCount() == 999999;
-            }
-
-            return self::$unlimited_nodes;
+            return self::$unlimited_nodes = self::getAllowedNodeCount();
         }
 
         /**
          * @return int
          */
         public static function getAllowedNodeCount() {
-            if (self::$allowed_node_count) {
-                self::$allowed_node_count = self::$License->get_allowed_node_count();
-            }
-
-            return self::$allowed_node_count;
+            return self::$allowed_node_count = self::$api->get_allowed_node_count();
         }
 
         /**
          * @return string
          */
         public static function getLicenseResponse() {
-            if (self::$license_response == null) {
-                self::$license_response = self::$License->get_license_response();
-            }
-
-            return self::$license_response;
+            return self::$license_response = self::$api->get_license_response();
         }
 
     }

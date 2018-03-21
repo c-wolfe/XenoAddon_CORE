@@ -22,7 +22,7 @@
     /**
      * Class Cron
      *
-     * TODO: Waiting for documentation on APIv2 to implement this into a working version
+     * TODO: so fucking lazy, really don't wanna implement this but I kinda want to -_------
      *
      * @package Cameron\XenoPanel\Addons\Core\Cron
      */

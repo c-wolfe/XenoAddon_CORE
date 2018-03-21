@@ -18,8 +18,6 @@
 
     namespace Cameron\XenoPanel\Addons\Core\Entities;
 
-    $node = CNode::fromName('test');
-
     /**
      * Class CNode
      *
