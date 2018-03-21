@@ -35,6 +35,8 @@
     require __DIR__ . '/classes/other/Time.class.php';
 
     require __DIR__ . '/classes/routing/Routing.class.php';
+    require __DIR__ . '/utils/UtilFiglet.utility.php';
+    require __DIR__ . '/utils/UtilStrings.utility.php';
 
     require __DIR__ . '/utils/UtilFiglet.utility.php';
     require __DIR__ . '/utils/UtilStrings.utility.php';
