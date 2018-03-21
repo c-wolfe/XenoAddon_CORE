@@ -1,0 +1,6 @@
+[
+  {
+    "route": "_core?/?",
+    "location": "addons/_core/pages/index"
+  }
+]
