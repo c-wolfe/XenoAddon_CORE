@@ -18,8 +18,6 @@
 
     namespace Cameron\XenoPanel\Addons\Core\Entities;
 
-    $Clicense = new CLicense();
-
     /**
      * Class CLicense
      *
@@ -32,7 +30,7 @@
         private static $api;
 
         public function __construct() {
-            self::$api = $GLOBALS['License'];
+            self::$api = new \LicenseAPIV2;
         }
 
         /**

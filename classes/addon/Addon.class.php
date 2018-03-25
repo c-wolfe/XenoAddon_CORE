@@ -19,6 +19,8 @@
 
     use Cameron\XenoPanel\Addons\Core\Addon\AddonType;
     use Cameron\XenoPanel\Addons\Core\Configuration\Configuration;
+    use Cameron\XenoPanel\Addons\Core\Entities\CLicense;
+    use Cameron\XenoPanel\Addons\Core\Entities\CPanel;
     use Cameron\XenoPanel\Addons\Core\Routing\Routing;
 
     /**
@@ -57,52 +59,12 @@
         private $root_directory;
 
         public function __construct($name, $title, $version, $authors, $type, $premium = false) {
-            $this->Core = $GLOBALS['Core'];
-            $this->database = $GLOBALS['Core']->db();
             $this->name = $name;
             $this->title = $title;
             $this->version = $version;
             $this->authors = $authors;
             $this->type = $type;
             $this->premium = $premium;
-            $this->directory = __DIR__ . '/';
-            $this->root_directory = __DIR__ . '/';
-
-            while (!file_exists($this->getRootDirectory() . 'composer.json') && !file_exists($this->getRootDirectory() . 'includes/config.cfg')) {
-                $this->root_directory .= '../';
-            }
-
-            if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
-
-                $this->database->insert('addons_list', [
-                    "enabled" => false,
-                    "name"    => $this->getTitle(),
-                    "short"   => $this->getName(),
-                    "version" => $this->getVersion()
-                ]);
-
-            } else {
-                $this->database->update('addons_list', [
-                    'version' => $this->getVersion(),
-                    'title'   => $this->getTitle()
-                ], ['short' => $this->getName()]);
-            }
-
-            if ($this->isPremium()) {
-                if (file_exists($this->getDirectory() . '.license')) {
-                    $this->setLicense(file_get_contents($this->getDirectory() . '.license'));
-
-                    /**
-                     * Waiting to implement the real checker. Depending on how it's implemented on Xeno's level, we can
-                     * have free addons with premium features built in, allowing us to have only one project to manage
-                     * instead of multiple
-                     */
-                    $this->license_valid = true;
-                } else {
-                    file_put_contents($this->getDirectory() . '.license', 'Your license here :)');
-                }
-            }
-
         }
 
         /**
@@ -187,6 +149,49 @@
          * Initialize the addon
          */
         public function initialize() {
+
+            error_reporting(E_ALL);
+            ini_set("display_errors", 1);
+
+            $this->Core = new \CoreAPIV2;
+            $this->database = $GLOBALS['database'];
+            $this->directory = __DIR__ . '/';
+            $this->root_directory = __DIR__ . '/';
+
+            while (!file_exists($this->getRootDirectory() . 'composer.json') && !file_exists($this->getRootDirectory() . 'includes/config.cfg')) {
+                $this->root_directory .= '../';
+            }
+
+            if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
+
+                $this->database->insert('addons_list', [
+                    "enabled" => false,
+                    "name"    => $this->getTitle(),
+                    "short"   => $this->getName(),
+                    "version" => $this->getVersion()
+                ]);
+
+            }
+
+            if ($this->isPremium()) {
+                if (file_exists($this->getDirectory() . '.license')) {
+                    $this->setLicense(file_get_contents($this->getDirectory() . '.license'));
+
+                    /**
+                     * Waiting to implement the real checker. Depending on how it's implemented on Xeno's level, we can
+                     * have free addons with premium features built in, allowing us to have only one project to manage
+                     * instead of multiple
+                     */
+                    $this->license_valid = true;
+                } else {
+                    file_put_contents($this->getDirectory() . '.license', 'Your license here :)');
+                }
+            }
+
+
+            $GLOBALS['Clicense'] = new CLicense();
+            $GLOBALS['Cpanel'] = new CPanel();
+
             if ($this->onLoad()) $this->onEnable();
         }
 
@@ -194,8 +199,6 @@
          * @return bool Whether we loaded successfully
          */
         public function onLoad() {
-            $GLOBALS['config'] = $this->getAddonConfig();
-
             $this->config = new Configuration($this);
             $this->getConfig()
                 ->saveDefaultConfig();
@@ -207,12 +210,18 @@
             return true;
         }
 
+        public function install() {
+
+        }
+
         /**
          * Get the config required for XenoPanel to load the addon
          *
+         * @param array $extra Extra parameters that needed to be loaded into the config array
+         *
          * @return array
          */
-        public function getAddonConfig() {
+        public function getAddonConfig($extra = []) {
             $config = [];
             $config['name'] = $this->getName();
             $config['title'] = $this->getTitle();
@@ -223,7 +232,7 @@
             // Licensing currently doesn't exist, and is pending discussion with Liam of how it will be implemented.
             if ($this->getLicense() != null) $config['license'] = $this->getLicense();
 
-            return $config;
+            return array_merge($config, $extra);
         }
 
         /**
@@ -346,15 +355,6 @@
          */
         public function error($error) {
             $this->Core->error($error);
-        }
-
-        /**
-         * @param $email   string
-         * @param $subject string
-         * @param $body    string
-         */
-        public function sendEmail($email, $subject, $body) {
-            $this->api->send_email($email, $subject, $body);
         }
 
     }

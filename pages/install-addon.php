@@ -15,5 +15,53 @@
      * limitations under the License.
      */
 
-    require '../init.php';
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
 
+
+    if (!isset($_GET['addon']) || empty($_GET['addon'])) {
+        header("Location: /_core");
+        die('Empty `ADDON` variable.');
+    }
+
+    require __DIR__ . '/../init.php';
+    $config = $Ccore->getAddonConfig([
+        'title'    => 'Install Addon',
+        'location' => 'page',
+    ]);
+
+    if ($_GET['addon'] == $Ccore->getName()) {
+        setcookie('_core:error', 1);
+        header("Location: /{$Ccore->getName()}");
+        die('Cannot install self');
+    }
+
+    $path = $Ccore->getRootDirectory() . "addons/$_GET[addon]/init.php";
+
+    if (!file_exists($path)) {
+        setcookie('_core:error', 2);
+        header("Location: /{$Ccore->getName()}");
+        die('Requested addon\'s path does not exist');
+    }
+
+    if (!(include $path)) {
+        setcookie('_core:error', 3);
+        header("Location: /{$Ccore->getName()}");
+        die('Failed to import file');
+    }
+
+    require __DIR__ . '/../../../includes/init.php';
+
+    if ($role !== 'admin') {
+        setcookie('_core:error', -99);
+        header("Location: /{$Ccore->getName()}");
+        die('No permission. Requires: `ADMIN`');
+    }
+
+    $Ccore->initialize();
+
+    //test
+    echo $_addon->getTitle() . ' v' . $_addon->getVersion() . ' by ' . $_addon->getAuthor();
+    //end test
+
+    //...

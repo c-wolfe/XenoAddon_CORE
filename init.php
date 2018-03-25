@@ -44,10 +44,9 @@
     class AddonCore extends Addon {
 
         public function __construct() {
-            parent::__construct("_core", "Cameron's Core", "1.0.0-DEV", ["Cameron Wolfe"], AddonType::HEADER);
+            parent::__construct("_core", "Cameron's Core", "1.0.0-DEV", ["Cameron Wolfe"], AddonType::PAGE);
         }
 
     }
 
     $Ccore = new AddonCore();
-    $Ccore->initialize();

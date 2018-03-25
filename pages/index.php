@@ -15,5 +15,16 @@
      * limitations under the License.
      */
 
-    require '../init.php';
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
 
+    require __DIR__ . '/../init.php';
+    $config = $Ccore->getAddonConfig([
+        'title'    => $Ccore->getTitle(),
+        'location' => 'page',
+    ]);
+
+    require __DIR__ . '/../../../includes/init.php';
+
+    //    $Ccore->initialize();
+?>

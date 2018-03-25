@@ -17,9 +17,7 @@
 
 
     namespace Cameron\XenoPanel\Addons\Core\Entities;
-
-    $Cpanel = new CPanel();
-
+    
     /**
      * Class Panel
      *
@@ -30,7 +28,7 @@
         private static $api;
 
         public function __construct() {
-            self::$api = $GLOBALS['Panel'];
+            self::$api = new \PanelAPIV2;
         }
 
         /**

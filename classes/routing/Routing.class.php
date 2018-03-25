@@ -35,6 +35,8 @@
 
         public function __construct($addon) {
             $this->addon = $addon;
+            $this->routes = [];
+            $this->default_routes = [];
         }
 
         /**

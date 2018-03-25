@@ -37,6 +37,8 @@
         public function __construct($addon) {
             $this->addon = $addon;
             $this->database = $GLOBALS['database'];
+            $this->default_config = [];
+            $this->config = [];
         }
 
         /**
