@@ -16,7 +16,11 @@
      * limitations under the License.
      */
 
+
     namespace Cameron\XenoPanel\Addons\Core;
+
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
 
     require __DIR__ . '/classes/entities/Filter.class.php';
     require __DIR__ . '/classes/entities/License.class.php';
@@ -50,3 +54,16 @@
     }
 
     $Ccore = new AddonCore();
+
+    if (!isset($_core)) {
+        $config = $Ccore->getAddonConfig([
+            'title'    => $Ccore->getTitle(),
+            'location' => 'page',
+            'file'     => 'pages/routing'
+        ]);
+
+        include $Ccore->getRootDirectory() . 'includes/init.php';
+        $Ccore->initialize();
+    }
+
+

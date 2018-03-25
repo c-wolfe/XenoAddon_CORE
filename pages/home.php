@@ -15,16 +15,14 @@
      * limitations under the License.
      */
 
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
 
-    require __DIR__ . '/../init.php';
-    $config = $Ccore->getAddonConfig([
-        'title'    => $Ccore->getTitle(),
-        'location' => 'page',
-    ]);
+    if ($Ccore->isVersionDev()) {
 
-    require __DIR__ . '/../../../includes/init.php';
 
-    //    $Ccore->initialize();
+
+    } else {
+        echo 'Nothin to see here :)';
+    }
+
+
 ?>

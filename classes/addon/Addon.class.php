@@ -19,8 +19,6 @@
 
     use Cameron\XenoPanel\Addons\Core\Addon\AddonType;
     use Cameron\XenoPanel\Addons\Core\Configuration\Configuration;
-    use Cameron\XenoPanel\Addons\Core\Entities\CLicense;
-    use Cameron\XenoPanel\Addons\Core\Entities\CPanel;
     use Cameron\XenoPanel\Addons\Core\Routing\Routing;
 
     /**
@@ -82,6 +80,12 @@
          * @return bool Whether the column exists in the database
          */
         public function rowExistsInDatabase($table, $column, $value) {
+
+            if ($this->database == null) {
+                $this->database = $GLOBALS['database'];
+            }
+
+
             $search = [];
             for ($i = 0; $i < sizeof($column); $i++) {
                 $search[ $column[ $i ] ] = $value[ $i ];
@@ -149,29 +153,15 @@
          * Initialize the addon
          */
         public function initialize() {
-
-            error_reporting(E_ALL);
-            ini_set("display_errors", 1);
-
             $this->Core = new \CoreAPIV2;
-            $this->database = $GLOBALS['database'];
-            $this->directory = __DIR__ . '/';
             $this->root_directory = __DIR__ . '/';
 
             while (!file_exists($this->getRootDirectory() . 'composer.json') && !file_exists($this->getRootDirectory() . 'includes/config.cfg')) {
                 $this->root_directory .= '../';
             }
+            $this->root_directory = realpath($this->root_directory) . '/';
 
-            if (!$this->rowExistsInDatabase('addons_list', ['short'], [$this->getName()])) {
-
-                $this->database->insert('addons_list', [
-                    "enabled" => false,
-                    "name"    => $this->getTitle(),
-                    "short"   => $this->getName(),
-                    "version" => $this->getVersion()
-                ]);
-
-            }
+            $this->directory = realpath($this->getRootDirectory() . 'addons/' . $this->getName() . '/') . '/';
 
             if ($this->isPremium()) {
                 if (file_exists($this->getDirectory() . '.license')) {
@@ -188,10 +178,6 @@
                 }
             }
 
-
-            $GLOBALS['Clicense'] = new CLicense();
-            $GLOBALS['Cpanel'] = new CPanel();
-
             if ($this->onLoad()) $this->onEnable();
         }
 
@@ -199,9 +185,11 @@
          * @return bool Whether we loaded successfully
          */
         public function onLoad() {
+
             $this->config = new Configuration($this);
             $this->getConfig()
                 ->saveDefaultConfig();
+            $this->getConfig()->loadConfig();
 
             $this->routing = new Routing($this);
             $this->getRouting()
@@ -211,7 +199,17 @@
         }
 
         public function install() {
+            if ($this->database == null) {
+                $this->database = $GLOBALS['database'];
+            }
 
+            $this->database->insert('addons_list', [
+                "status"  => "disabled",
+                "name"    => $this->getTitle(),
+                "image"   => "demo",
+                "short"   => $this->getName(),
+                "version" => $this->getVersion()
+            ]);
         }
 
         /**

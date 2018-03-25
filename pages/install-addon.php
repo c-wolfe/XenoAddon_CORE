@@ -15,22 +15,17 @@
      * limitations under the License.
      */
 
-    error_reporting(E_ALL);
-    ini_set("display_errors", 1);
+    if ($Ccore->isVersionDev()) {
+        error_reporting(E_ALL);
+        ini_set("display_errors", 1);
+    }
 
-
-    if (!isset($_GET['addon']) || empty($_GET['addon'])) {
+    if (!isset($_addon_name) || empty($_addon_name)) {
         header("Location: /_core");
         die('Empty `ADDON` variable.');
     }
 
-    require __DIR__ . '/../init.php';
-    $config = $Ccore->getAddonConfig([
-        'title'    => 'Install Addon',
-        'location' => 'page',
-    ]);
-
-    if ($_GET['addon'] == $Ccore->getName()) {
+    if ($_addon_name == $Ccore->getName()) {
         setcookie('_core:error', 1);
         header("Location: /{$Ccore->getName()}");
         die('Cannot install self');
@@ -50,18 +45,63 @@
         die('Failed to import file');
     }
 
-    require __DIR__ . '/../../../includes/init.php';
+    echo "<h4>{$_addon->getTitle()} <b>v</b>{$_addon->getVersion()} <b>by</b> {$_addon->getAuthor()}</h4>";
 
-    if ($role !== 'admin') {
-        setcookie('_core:error', -99);
-        header("Location: /{$Ccore->getName()}");
-        die('No permission. Requires: `ADMIN`');
-    }
+    if (isset($_POST['do_install'])) {
 
-    $Ccore->initialize();
+        echo "Initializing...<br>";
+        $_addon->initialize();
+        echo "Installing...<br>";
+        $_addon->install();
 
-    //test
-    echo $_addon->getTitle() . ' v' . $_addon->getVersion() . ' by ' . $_addon->getAuthor();
-    //end test
+        $error = $_addon->database->error();
 
-    //...
+        switch ($error[0]) {
+
+            case '00000': {
+                echo "Successfully installed {$_addon->getTitle()}! Click <a href='/admin/addons'>here</a> to enable it.";
+                break;
+            }
+
+            case '23000': {
+                echo "<br><br>Failed! <br>An addon with the one you're trying to install, already exists in the database. Please verify that your `addons_list` table in your database, does not have a row with the following values, name:`{$_addon->getName()}`,short:`{$_addon->getTitle()}`. If you do, please manually review your plugins installed, and see if you're eligible to manually delete the row. If yes, then attempt to install the addon again. If no, please contact a developer to assist you.`";
+                break;
+            }
+
+            default: {
+                echo 'Failed! <br>An unhandled exception has occurred. We have collected this data, and we\'re gonna get this fixed for ya!';
+                break;
+            }
+
+        }
+
+    } else {
+
+        ?>
+
+
+        <p>
+
+
+        <?php
+
+
+        if ($Ccore->rowExistsInDatabase('addons_list', ['name'], [$_addon->getTitle()])) {
+            echo "It seems that you already have an addon installed with the name of {$_addon->getTitle()}. You should manually review this before attempting to install the addon.";
+        } elseif ($Ccore->rowExistsInDatabase('addons_list', ['short'], [$_addon->getName()])) {
+            echo "It seems that you already have an addon installed with the alias of {$_addon->getName()}. You should manually review this before attempting to install the addon.";
+        } else { ?>
+            You are about to install <?= $_addon->getTitle() ?> v<?= $_addon->getVersion() ?>. Are you
+            <b>sure</b> you want to install this addon?
+
+            <form method="post">
+
+                <input name="do_install" value="yes" type="hidden">
+                <button type="submit" class="btn btn-success">Yes!</button>
+                <a href="javascript:history.go(-1)" class="btn btn-danger">No!</a>
+
+            </form>
+        <?php } ?>
+
+        </p>
+    <?php } ?>

@@ -28,7 +28,7 @@
         private $username;
 
         public function __construct($user = null) {
-            self::$api = $GLOBALS['User'];
+            self::$api = new \UserAPIV2;
             self::$user = $user;
             $this->username = $user['username'];
         }

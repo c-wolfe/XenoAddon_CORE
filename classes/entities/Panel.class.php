@@ -177,4 +177,13 @@
             return $result;
         }
 
+        /**
+         * @param array $array
+         *
+         * @return array
+         */
+        private function joining($array = []) {
+            return array_merge([], $array);
+        }
+
     }

@@ -17,6 +17,9 @@
 
     namespace Cameron\XenoPanel\Addons\Core\Routing;
 
+
+    error_reporting(E_ALL);
+    ini_set("display_errors", 1);
     use Cameron\XenoPanel\Addons\Core\Addon;
 
     /**
@@ -29,7 +32,7 @@
         /** @var Addon $addon */
         private $addon;
         /** @var array */
-        private $routes;
+        public $routes;
         /** @var array */
         private $default_routes;
 
@@ -38,6 +41,7 @@
             $this->routes = [];
             $this->default_routes = [];
         }
+
 
         /**
          * Load routes into our array so that we can handle them

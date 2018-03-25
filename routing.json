@@ -1,10 +1,10 @@
 [
   {
-    "route": "_core",
-    "location": "addons/_core/pages/index"
+    "route": "_core/?",
+    "location": "addons/_core/init"
   },
   {
     "route": "_core/install/[:addon]",
-    "location": "addons/_core/pages/install-addon"
+    "location": "addons/_core/init"
   }
 ]

@@ -20,6 +20,8 @@
     use Cameron\XenoPanel\Addons\Core\Addon;
 
     /**
+     * TODO: This shit needs to be fixed tbh. It doesn't work so well
+     *
      * Class Configuration
      *
      * @package Cameron\XenoPanel\Addons\Core\Configuration
@@ -34,11 +36,17 @@
         /** @var array */
         private $default_config;
 
+        /**
+         * Configuration constructor.
+         *
+         * @param Addon $addon
+         */
         public function __construct($addon) {
             $this->addon = $addon;
             $this->database = $GLOBALS['database'];
             $this->default_config = [];
             $this->config = [];
+            $this->loadConfig();
         }
 
         /**
@@ -74,8 +82,8 @@
 
             foreach (array_keys($this->config) as $key) {
 
-                $key = strtolower($this->addon->getName() . "_" . $key);
                 $val = $this->config[ $key ];
+                $key = strtolower($this->addon->getName() . '_' . $key);
 
                 if (!$this->addon->rowExistsInDatabase('addons_configuration', ['name'], [$key])) {
                     $this->database->insert("addons_configuration", [
@@ -129,13 +137,13 @@
          */
         public function loadConfig() {
 
-            $result = $this->database->select("addons_configuration", "addon", [
+            $result = $this->database->select("addons_configuration", "*", [
                 "addon" => $this->addon->getName()
             ]);
 
             foreach ($result as $item) {
-                $item['name'] = str_replace($this->addon->getName(), '', $item['name'], $count = 1);
-                $this->setConfig($item['name'], $item);
+                $item['name'] = substr($item['name'], strlen($this->addon->getName()), strlen($item['name']));
+                $this->setConfig($item['name'], $item['value']);
             }
 
         }
@@ -212,6 +220,8 @@
          * @return string Get the direct value of an option
          */
         public function getOption($key) {
+            echo \GuzzleHttp\json_encode($this->config[$key]);
+            return "enabled";
             return $this->config[ $key ]['value'];
         }
 
