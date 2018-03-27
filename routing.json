@@ -1,10 +1,18 @@
 [
   {
-    "route": "_core/?",
+    "route": "[c|_core]/?",
     "location": "addons/_core/init"
   },
   {
-    "route": "_core/install/[:addon]",
+    "route": "[c|_core]/install/[:addon]",
+    "location": "addons/_core/init"
+  },
+  {
+    "route": "[c|_core]/install",
+    "location": "addons/_core/init"
+  },
+  {
+    "route": "[c|_core]/upgrade",
     "location": "addons/_core/init"
   }
 ]

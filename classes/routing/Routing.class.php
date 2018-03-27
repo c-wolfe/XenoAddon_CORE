@@ -20,6 +20,7 @@
 
     error_reporting(E_ALL);
     ini_set("display_errors", 1);
+
     use Cameron\XenoPanel\Addons\Core\Addon;
 
     /**
@@ -29,10 +30,10 @@
      */
     class Routing {
 
-        /** @var Addon $addon */
-        private $addon;
         /** @var array */
         public $routes;
+        /** @var Addon $addon */
+        private $addon;
         /** @var array */
         private $default_routes;
 
@@ -40,8 +41,8 @@
             $this->addon = $addon;
             $this->routes = [];
             $this->default_routes = [];
+            $this->loadRoutes();
         }
-
 
         /**
          * Load routes into our array so that we can handle them

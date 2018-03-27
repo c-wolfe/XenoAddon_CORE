@@ -28,11 +28,11 @@
      */
     class Configuration {
 
+        /** @var array */
+        public $config;
         /** @var Addon */
         private $addon;
         private $database;
-        /** @var array */
-        private $config;
         /** @var array */
         private $default_config;
 
@@ -47,6 +47,22 @@
             $this->default_config = [];
             $this->config = [];
             $this->loadConfig();
+        }
+
+        /**
+         * Load your configuration options from the database
+         */
+        public function loadConfig() {
+
+            $result = $this->database->select("addons__core_configuration", "*", [
+                "addon" => $this->addon->getName()
+            ]);
+
+            foreach ($result as $item) {
+                $item['name'] = substr($item['name'], strlen($this->addon->getName() . '_'), strlen($item['name']));
+                $this->setConfig($item['name'], $item);
+            }
+
         }
 
         /**
@@ -85,8 +101,8 @@
                 $val = $this->config[ $key ];
                 $key = strtolower($this->addon->getName() . '_' . $key);
 
-                if (!$this->addon->rowExistsInDatabase('addons_configuration', ['name'], [$key])) {
-                    $this->database->insert("addons_configuration", [
+                if (!$this->addon->rowExistsInDatabase('addons__core_configuration', ['name'], [$key])) {
+                    $this->database->insert('addons__core_configuration', [
                         "addon"         => $this->addon->getName(),
                         "name"          => $key,
                         "value"         => $val['value'],
@@ -97,7 +113,7 @@
                         "extra_details" => $val['extra_details'],
                     ]);
                 } else {
-                    $this->database->update("addons_configuration", [
+                    $this->database->update('addons__core_configuration', [
                         "value"         => $val['value'],
                         "long_name"     => $val['long_name'],
                         "long_details"  => $val['long_details'],
@@ -109,6 +125,8 @@
                         "name"  => $key,
                     ]);
                 };
+
+                echo \GuzzleHttp\json_encode($this->database->error()) . "<br>";
 
             }
 
@@ -130,22 +148,6 @@
          */
         public function loadDefaultsFromJson($json) {
             $this->setDefaultConfig(json_decode($json, true));
-        }
-
-        /**
-         * Load your configuration options from the database
-         */
-        public function loadConfig() {
-
-            $result = $this->database->select("addons_configuration", "*", [
-                "addon" => $this->addon->getName()
-            ]);
-
-            foreach ($result as $item) {
-                $item['name'] = substr($item['name'], strlen($this->addon->getName()), strlen($item['name']));
-                $this->setConfig($item['name'], $item['value']);
-            }
-
         }
 
         /**
@@ -220,10 +222,7 @@
          * @return string Get the direct value of an option
          */
         public function getOption($key) {
-            echo \GuzzleHttp\json_encode($this->config[$key]);
-            return "enabled";
             return $this->config[ $key ]['value'];
         }
-
 
     }

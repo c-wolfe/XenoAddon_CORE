@@ -39,6 +39,10 @@
          * @param $node array APIv2 object of the node
          */
         public function __construct($node = null) {
+            if (!isset($GLOBALS['Node'])) {
+                $GLOBALS['Node'] = new \NodeAPIV2;
+            }
+
             self::$api = $GLOBALS['Node'];
             self::$node = $node;
             $this->name = $node['name'];

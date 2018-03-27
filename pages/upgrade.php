@@ -16,9 +16,3 @@
      */
 
 
-    if ($Ccore->isVersionDev()) {
-
-
-    } else {
-        echo 'Nothin to see here :)';
-    }

@@ -17,7 +17,7 @@
 
 
     namespace Cameron\XenoPanel\Addons\Core\Entities;
-    
+
     /**
      * Class Panel
      *
@@ -28,7 +28,7 @@
         private static $api;
 
         public function __construct() {
-            self::$api = new \PanelAPIV2;
+            self::$api = $GLOBALS['Panel'];
         }
 
         /**
@@ -49,6 +49,15 @@
             }
 
             return $servers;
+        }
+
+        /**
+         * @param array $array
+         *
+         * @return array
+         */
+        private function joining($array = []) {
+            return array_merge([], $array);
         }
 
         /**
@@ -175,15 +184,6 @@
             if (($result instanceof \SplBool && !$result)) return "UNKNOWN";
 
             return $result;
-        }
-
-        /**
-         * @param array $array
-         *
-         * @return array
-         */
-        private function joining($array = []) {
-            return array_merge([], $array);
         }
 
     }

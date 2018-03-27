@@ -68,7 +68,10 @@
                 break;
             }
 
+            //TODO: Add more error messages
+
             default: {
+                //TODO: Implement error catching and send us the exception
                 echo 'Failed! <br>An unhandled exception has occurred. We have collected this data, and we\'re gonna get this fixed for ya!';
                 break;
             }

@@ -42,7 +42,7 @@
         /** @var array */
         private $authors;
         /** @var Configuration */
-        private $config;
+        protected $config;
         /** @var Routing */
         private $routing;
         /** @var bool */
@@ -63,13 +63,6 @@
             $this->authors = $authors;
             $this->type = $type;
             $this->premium = $premium;
-        }
-
-        /**
-         * @return string
-         */
-        public function getRootDirectory() {
-            return $this->root_directory;
         }
 
         /**
@@ -95,54 +88,6 @@
         }
 
         /**
-         * @return string
-         */
-        public function getName() {
-            return strtolower($this->name);
-        }
-
-        /**
-         * @return String
-         */
-        public function getTitle() {
-            return $this->title;
-        }
-
-        /**
-         * @return string
-         */
-        public function getVersion() {
-            return strtoupper($this->version);
-        }
-
-        /**
-         * @param string $version
-         */
-        public function setVersion($version) {
-            if ($this->version == $version) return;
-            $this->version = $version;
-            $this->database->update('addons_list', ['version' => $this->getVersion()], ['short' => $this->getName()]);
-        }
-
-        /**
-         * Check whether the addon is a premium plugin or not.
-         *
-         * @return bool
-         */
-        public function isPremium() {
-            return $this->premium;
-        }
-
-        /**
-         * Get the directory of the addon
-         *
-         * @return string
-         */
-        public function getDirectory() {
-            return $this->directory;
-        }
-
-        /**
          * @return bool
          */
         public function isLicenseValid() {
@@ -153,7 +98,8 @@
          * Initialize the addon
          */
         public function initialize() {
-            $this->Core = new \CoreAPIV2;
+            $this->Core = isset($GLOBALS['Core']) ? $GLOBALS['Core'] : new \CoreAPIV2;
+
             $this->root_directory = __DIR__ . '/';
 
             while (!file_exists($this->getRootDirectory() . 'composer.json') && !file_exists($this->getRootDirectory() . 'includes/config.cfg')) {
@@ -182,21 +128,58 @@
         }
 
         /**
+         * @return string
+         */
+        public function getRootDirectory() {
+            return $this->root_directory;
+        }
+
+        /**
+         * Check whether the addon is a premium plugin or not.
+         *
+         * @return bool
+         */
+        public function isPremium() {
+            return $this->premium;
+        }
+
+        /**
+         * Get the directory of the addon
+         *
+         * @return string
+         */
+        public function getDirectory() {
+            return $this->directory;
+        }
+
+        /**
          * @return bool Whether we loaded successfully
          */
         public function onLoad() {
-
             $this->config = new Configuration($this);
-            $this->getConfig()
-                ->saveDefaultConfig();
-            $this->getConfig()->loadConfig();
-
             $this->routing = new Routing($this);
-            $this->getRouting()
-                ->saveDefaultRoutes();
 
             return true;
         }
+
+        /**
+         * @return Configuration
+         */
+        public function getConfig() {
+            return $this->config;
+        }
+
+        /**
+         * @return Routing
+         */
+        public function getRouting() {
+            return $this->routing;
+        }
+
+        /**
+         * @return bool Whether we enabled successfully
+         */
+        public function onEnable() { return true; }
 
         public function install() {
             if ($this->database == null) {
@@ -210,6 +193,46 @@
                 "short"   => $this->getName(),
                 "version" => $this->getVersion()
             ]);
+
+        }
+
+        /**
+         * Run after the initial install process. Reserve this for our addon, the initial addon is for more XenoPanel
+         * related stuff
+         */
+        public function postInstall() {
+            $this->config->saveDefaultConfig();
+            $this->routing->saveDefaultRoutes();
+        }
+
+        /**
+         * @return String
+         */
+        public function getTitle() {
+            return $this->title;
+        }
+
+        /**
+         * @return string
+         */
+        public function getVersion() {
+            return strtoupper($this->version);
+        }
+
+        /**
+         * @param string $version
+         */
+        public function setVersion($version) {
+            if ($this->version == $version) return;
+            $this->version = $version;
+            $this->database->update('addons_list', ['version' => $this->getVersion()], ['short' => $this->getName()]);
+        }
+
+        /**
+         * @return string
+         */
+        public function getName() {
+            return strtolower($this->name);
         }
 
         /**
@@ -226,6 +249,8 @@
             $config['version'] = $this->getVersion();
             $config['authors'] = $this->getAuthors();
             $config['type'] = AddonType::toString($this->getType());
+            $config['title'] = $this->getTitle();
+            $config['location'] = 'page';
 
             // Licensing currently doesn't exist, and is pending discussion with Liam of how it will be implemented.
             if ($this->getLicense() != null) $config['license'] = $this->getLicense();
@@ -261,25 +286,6 @@
             $this->license = $license;
             file_put_contents($this->getDirectory() . '.license', $this->getLicense());
         }
-
-        /**
-         * @return Configuration
-         */
-        public function getConfig() {
-            return $this->config;
-        }
-
-        /**
-         * @return Routing
-         */
-        public function getRouting() {
-            return $this->routing;
-        }
-
-        /**
-         * @return bool Whether we enabled successfully
-         */
-        public function onEnable() { return true; }
 
         /**
          * @return string Get formatted author list

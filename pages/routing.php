@@ -29,12 +29,27 @@
         die('No permission. Requires: `ADMIN`');
     }
 
-    $uri = str_replace('/_core', '', $_SERVER['REQUEST_URI']);
+    $uri = str_replace('/c', '', str_replace('/core', '', $_SERVER['REQUEST_URI']));
 
     if (str_starts_with($uri, '/install/')) {
         $_addon_name = str_replace('/install/', '', $uri);
         include 'install-addon.php';
-    } else {
+    }//
+
+    elseif (str_starts_with($uri, '/install')) {
+        if ($Ccore->rowExistsInDatabase('addons_list', ['short'], [$Ccore->getName()])) {
+            header("Location: $url/c/upgrade");
+            exit;
+        }
+        include 'install/install.php';
+    }//
+
+    elseif (str_starts_with($uri, '/upgrade')) {
+        include 'upgrade.php';
+    }//
+
+    else {
         include 'home.php';
     }
+
 
